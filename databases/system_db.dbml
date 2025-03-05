@@ -1,0 +1,54 @@
+Table User {
+    id integer [pk, increment]
+    username string [unique, not null]
+    email string [unique, not null]
+    created_at timestamp [default: `now()`]
+}
+
+Table Post {
+    id integer [pk, increment]
+    user_id integer [ref: > User.id]
+    title string
+    description text
+    place_id integer [ref: > Place.id]
+    created_at timestamp [default: `now()`]
+}
+
+Table Place {
+    id integer [pk, increment]
+    name string
+}
+
+Table Photo {
+    id integer [pk, increment]
+    post_id integer [ref: > Post.id]
+    url string [not null]
+}
+
+Table Like {
+    user_id integer [ref: > User.id]
+    post_id integer [ref: > Post.id]
+    created_at timestamp [default: `now()`]
+    
+    indexes {
+      (user_id, post_id) [pk]
+    }
+}
+
+Table Comment {
+    id integer [pk, increment]
+    user_id integer [ref: > User.id]
+    post_id integer [ref: > Post.id]
+    content text
+    created_at timestamp [default: `now()`]
+}
+
+Table Follow {
+    follower_id integer [ref: > User.id]
+    following_id integer [ref: > User.id]
+    created_at timestamp [default: `now()`]
+    
+    indexes {
+      (follower_id, following_id) [pk]
+    }
+}
