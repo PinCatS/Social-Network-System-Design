@@ -1,0 +1,20 @@
+// Mapping for places index in elastic for seaching places
+PUT /places/_mapping
+{
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "text",
+            "analyzer": "standard",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 64
+                }
+            }
+        }
+    }
+
+}

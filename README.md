@@ -93,6 +93,31 @@ Metadata Read Traffic = 5000 * 0.10MB + 2 * 0.02MB ~= 750 MB/s
 Media Read Traffic = 5000 * 1MB = 5 GB/s
 ```
 
+Кол-во дисков на год
+
+```
+HDD (100 OP/s 100 MB/s)
+
+Reasoning behind choosing HDDs both for mata and media is
+because the estimated RPS and throughput are not so high
+to choose SSDs that are much expensive.
+
+Capacity needed:
+Media => 10_000_000 * 5 * 1MB * 365 ~= 20PB => 1000 disks
+Meta => 50 MB/s * 86400 * 365 ~= 2PB => 100 disks
+// Additional capacity for elastic places records are not included, theay are too small
+
+RPS:
+500 + 5000 = 5500 => 55 disks
+
+Throughput:
+Media 5500 MB/s => 55 disks
+Meta 750 MB/s + 50 MB/s = 800 MB/s => 8 disks
+
+Media MAX(1000, 55, 55) = 1000 disks in Object storage (20TB each)
+Meta MAX(100, 55, 8) = 100 disks (20TB each)
+```
+
 ### Реакции
 
 Подсчёт размера сущности LIKE:
@@ -111,7 +136,7 @@ Media Read Traffic = 5000 * 1MB = 5 GB/s
 - Кол-во реакций в день одним пользователем 50
 - Размер сущности LIKE 32B
 Write RPS = (10_000_000 * 50) / 86400 ~= 5000
-Write Traffic = 5000 * 32B ~= 160KB
+Write Traffic = 5000 * 32B ~= 160KB/s
 ```
 
 ```
@@ -119,7 +144,24 @@ Write Traffic = 5000 * 32B ~= 160KB
 - Кол-во постов, которые просматривает пользователь в день 50 (включая выдачу в лентах)
 - Размер сущности LIKE 32B
 Read RPS = (10_000_000 * 50) / 86400 ~= 5000
-Read Traffic = 5000 * 32B ~= 160KB
+Read Traffic = 5000 * 32B ~= 160KB/s
+```
+
+Кол-во дисков на год
+
+```
+HDD (100 OP/s 100 MB/s)
+
+Capacity needed:
+10_000_000 * 5 * 32B * 365 ~= 800GB
+
+RPS:
+5000 + 5000 = 10000 => 100 disks
+
+Throughput:
+160 KB/s + 160 KB/s = 320 KB/s => 1 disk
+
+MAX(1, 100, 1) = 100 disks (15GB each)
 ```
 
 ### Комментарии
@@ -129,7 +171,7 @@ Read Traffic = 5000 * 32B ~= 160KB
 - Кол-во комментариев в день от пользователя 5
 - Средняя длина комментария 100 байт
 Write RPS = (10_000_000 * 5) / 86400 = ~500
-Write Traffic = 500 * 100B = 50K
+Write Traffic = 500 * 100B = 50K/s
 
 - DAU 10_000_000
 - Кол-во чтения комментариев в день одним пользователем 25 (изначально они скрыты)
@@ -137,4 +179,24 @@ Write Traffic = 500 * 100B = 50K
 - Средняя длина комментария 100 байт
 Read RPS = (10_000_000 * 25) / 86400 = ~2500
 Read Traffic = 2500 * 50 * 100B ~= 13 MB/s
+
+Кол-во дисков на год
+```
+
+HDD (100 OP/s 100 MB/s)
+
+Capacity needed:
+10_000_000 _ 5 _ 1000B (max comment len) \* 365 ~= 20TB
+
+RPS:
+500 + 2500 = 3000 => 30 disks
+
+Throughput:
+0.05 MB/s + 13 MB/s = 13 MB/s => 1 disk
+
+MAX(1, 30, 1) = 30 disks (1TB each)
+
+```
+
+
 ```
